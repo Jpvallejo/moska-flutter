@@ -31,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _children[_currentIndex],
       bottomNavigationBar: new BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         onTap: onTabTapped,
         currentIndex: _currentIndex,
         items: [

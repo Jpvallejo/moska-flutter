@@ -4,12 +4,7 @@ class MyNavigator {
   static void goToHome(BuildContext context) {
     Navigator.pushNamed(context, "/home");
   }
-
-  static void goToIntro(BuildContext context) {
-    Navigator.pushNamed(context, "/intro");
-  }
-
-  static void goToGame(BuildContext context) {
-    Navigator.pushNamed(context, "/game");
+  static void goToCreateCCExpense(BuildContext context) {
+    Navigator.pushNamed(context, "/ccExpense/create");
   }
 }

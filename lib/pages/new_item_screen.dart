@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moska_app/utils/moska.dart';
+import 'package:moska_app/utils/my_navigator.dart';
 
 class NewItemScreen extends StatefulWidget {
   NewItemScreen({Key key}) : super(key: key);
@@ -11,7 +12,12 @@ class _NewItemScreenState extends State<NewItemScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("NewItem Works!"),
+      body: IconButton(
+        icon: Icon(Icons.credit_card),
+        onPressed: () {
+          MyNavigator.goToCreateCCExpense(context);
+        },
+        ),
     );
   }
 
