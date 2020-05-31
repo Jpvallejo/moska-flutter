@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:moska_app/src/resources/dark_theme_provider.dart';
 import 'package:moska_app/src/ui/add_credit_card_expense_screen.dart';
 import 'package:moska_app/src/ui/home_screen.dart';
+import 'package:moska_app/src/ui/login_screen.dart';
+import 'package:moska_app/src/ui/profile_screen.dart';
 import 'package:moska_app/src/ui/splash_screen.dart';
 import 'package:moska_app/src/utils/styles.dart';
 
 var routes = <String, WidgetBuilder>{
   '/home': (BuildContext context) => HomeScreen(),
-  '/ccExpense/create': (BuildContext context) => AddCCExpenseScreen()
+  '/ccExpense/create': (BuildContext context) => AddCCExpenseScreen(),
+  '/login': (BuildContext context) => LoginScreen(),
+  '/profile': (BuildContext context) => ProfileScreen()
 };
 
 void main() => runApp(MyApp());

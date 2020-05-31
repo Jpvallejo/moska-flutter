@@ -6,6 +6,7 @@ import 'package:moska_app/src/ui/more_options_screen.dart';
 import 'package:moska_app/src/ui/new_item_screen.dart';
 import 'package:moska_app/src/ui/transactions_screen.dart';
 import 'package:moska_app/src/utils/moska.dart';
+import 'package:moska_app/src/utils/my_navigator.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -28,6 +29,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(Moska.name),
+        leading: new IconButton(
+          icon: Icon(CupertinoIcons.profile_circled),
+          onPressed: () {
+            MyNavigator.goToProfile(context);
+          },
+        ),
       ),
       body: _children[_currentIndex],
       bottomNavigationBar: new BottomNavigationBar(
