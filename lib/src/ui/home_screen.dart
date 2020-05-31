@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:moska_app/pages/dasboard_screen.dart';
-import 'package:moska_app/pages/more_options_screen.dart';
-import 'package:moska_app/pages/new_item_screen.dart';
-import 'package:moska_app/pages/transactions_screen.dart';
-import 'package:moska_app/utils/moska.dart';
-import 'package:moska_app/pages/budget_screen.dart';
+import 'package:moska_app/src/ui/budget_screen.dart';
+import 'package:moska_app/src/ui/dasboard_screen.dart';
+import 'package:moska_app/src/ui/more_options_screen.dart';
+import 'package:moska_app/src/ui/new_item_screen.dart';
+import 'package:moska_app/src/ui/transactions_screen.dart';
+import 'package:moska_app/src/utils/moska.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);

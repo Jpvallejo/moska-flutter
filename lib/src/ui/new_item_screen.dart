@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moska_app/utils/moska.dart';
-import 'package:moska_app/utils/my_navigator.dart';
+import 'package:moska_app/src/utils/my_navigator.dart';
 
 class NewItemScreen extends StatefulWidget {
   NewItemScreen({Key key}) : super(key: key);

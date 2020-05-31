@@ -1,9 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:moska_app/utils/my_navigator.dart';
-import 'package:moska_app/utils/moska.dart';
-import 'package:moska_app/utils/styles.dart';
+import 'package:moska_app/src/utils/moska.dart';
+import 'package:moska_app/src/utils/my_navigator.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

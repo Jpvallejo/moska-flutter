@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moska_app/utils/moska.dart';
 
 class MoreOptionsScreen extends StatefulWidget {
   MoreOptionsScreen({Key key}) : super(key: key);

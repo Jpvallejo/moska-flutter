@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moska_app/utils/moska.dart';
 
 class TransactionsScreen extends StatefulWidget {
   TransactionsScreen({Key key}) : super(key: key);
