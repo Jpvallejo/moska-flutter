@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:moska_app/notifiers/dark_theme_provider.dart';
-import 'package:moska_app/pages/add_credit_card_expense_screen.dart';
-import 'package:moska_app/pages/home_screen.dart';
-import 'package:moska_app/pages/splash_screen.dart';
-import 'package:moska_app/utils/styles.dart';
+import 'package:moska_app/src/resources/dark_theme_provider.dart';
+import 'package:moska_app/src/ui/add_credit_card_expense_screen.dart';
+import 'package:moska_app/src/ui/home_screen.dart';
+import 'package:moska_app/src/ui/splash_screen.dart';
+import 'package:moska_app/src/utils/styles.dart';
 
 var routes = <String, WidgetBuilder>{
   '/home': (BuildContext context) => HomeScreen(),
