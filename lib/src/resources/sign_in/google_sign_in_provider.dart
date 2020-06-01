@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -32,11 +34,19 @@ Future<String> signInWithGoogle() async {
   name = currentUser.displayName;
   email = currentUser.email;
   imageUrl = currentUser.photoUrl;
+
+  final storage = new FlutterSecureStorage();
+  storage.write(key: 'isLoggedIn', value: 'true');
+  storage.write(key: 'name', value: name);
+  storage.write(key: 'email', value: email);
+  storage.write(key: 'imageUrl', value: imageUrl);
   return 'signInWithGoogle succeeded: $user';
 }
 
-void signOutGoogle() async{
+void signOutGoogle() async {
   await googleSignIn.signOut();
+  final storage = new FlutterSecureStorage();
+  storage.deleteAll();
 
   print("User Sign Out");
 }

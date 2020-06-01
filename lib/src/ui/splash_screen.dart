@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:moska_app/src/utils/moska.dart';
 import 'package:moska_app/src/utils/my_navigator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -13,7 +15,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 5), () => MyNavigator.goToLogin(context));
+
+    Timer(Duration(seconds: 5), () => navigateUser(context));
   }
 
   @override
@@ -54,5 +57,21 @@ class _SplashScreenState extends State<SplashScreen> {
         ],
       ),
     );
+  }
+}
+
+navigateUser(BuildContext context) async {
+  final storage = new FlutterSecureStorage();
+  bool isLoggedIn = await storage.read(key: 'isLoggedIn') == 'true';
+  DateTime logInTime = DateTime.parse(await storage.read(key: 'logInTime'));
+
+  if (isLoggedIn &&
+      DateTime.now().isBefore(logInTime.add(new Duration(days: 1)))) {
+    MyNavigator.goToHome(context);
+  } else {
+    if (isLoggedIn) {
+      storage.deleteAll();
+    }
+    MyNavigator.goToLogin(context);
   }
 }
