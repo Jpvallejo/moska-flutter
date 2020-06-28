@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:intl/intl.dart';
+import 'package:moska_app/src/ui/credit_card_dropdown.dart';
 import 'package:moska_app/src/utils/datepicker.dart';
 
 
@@ -77,6 +78,10 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
                 hintText: "Description",
               ),
             ),
+          ),
+          new ListTile(
+            leading: const Icon(Icons.credit_card),
+            title: new CreditCardDropDown(),
           ),
           new ListTile(
             leading: const Icon(Icons.refresh),

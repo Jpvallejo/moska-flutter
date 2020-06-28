@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       CircleAvatar(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Colors.lightBlue,
                         radius: 50.0,
                       ),
                       Padding(
@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       Text(
                         Moska.name,
                         style: TextStyle(
-                            color: Colors.greenAccent,
+                            color: Colors.lightBlueAccent,
                             fontWeight: FontWeight.bold,
                             fontSize: 24.0),
                       )
