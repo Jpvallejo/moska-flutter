@@ -63,9 +63,10 @@ class _SplashScreenState extends State<SplashScreen> {
 navigateUser(BuildContext context) async {
   final storage = new FlutterSecureStorage();
   bool isLoggedIn = await storage.read(key: 'isLoggedIn') == 'true';
-  DateTime logInTime = DateTime.parse(await storage.read(key: 'logInTime'));
+  final logInTimeString = await storage.read(key: 'logInTime') ?? '';
+  DateTime logInTime = DateTime.tryParse(logInTimeString);
 
-  if (isLoggedIn &&
+  if (isLoggedIn && logInTime != null &&
       DateTime.now().isBefore(logInTime.add(new Duration(days: 1)))) {
     MyNavigator.goToHome(context);
   } else {
