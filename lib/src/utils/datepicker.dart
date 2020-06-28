@@ -7,7 +7,7 @@ class DatePicker {
 
   DatePicker(this.context, {@required this.onDateTimeChanged});
 
-  void show() {
+  void show(DateTime date) {
     showCupertinoModalPopup(
         context: context,
         builder: (context) {
@@ -23,9 +23,9 @@ class DatePicker {
                     onDateTimeChanged: (date) {
                       onDateTimeChanged(date);
                     },
-                    initialDateTime: DateTime.now(),
-                    minimumDate: DateTime(DateTime.now().year - 1),
-                    maximumDate: DateTime(DateTime.now().year + 3),
+                    initialDateTime: date,
+                    minimumDate: DateTime(date.year - 1),
+                    maximumDate: DateTime(date.year + 3),
                   ),
                 ),
                 Align(

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:intl/intl.dart';
 import 'package:moska_app/src/utils/datepicker.dart';
 
 
@@ -58,16 +59,16 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
           new ListTile(
               leading: GestureDetector(
                 onTap: () {
-                  datePicker.show();
+                  datePicker.show(date);
                 },
                 child: Icon(Icons.calendar_today),
               ),
               title: new GestureDetector(
                   onTap: () {
-                    datePicker.show();
+                    datePicker.show(date);
                   },
                   child: Text(
-                    date.toLocal().toString(),
+                    DateFormat('MM-dd-yyyy').format(date),
                   ))),
           new ListTile(
             leading: const Icon(Icons.description),
