@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moska_app/src/resources/dark_theme_provider.dart';
 import 'package:moska_app/src/ui/add_credit_card_expense_screen.dart';
 import 'package:moska_app/src/ui/home_screen.dart';
@@ -14,14 +15,17 @@ var routes = <String, WidgetBuilder>{
   '/profile': (BuildContext context) => ProfileScreen()
 };
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
+Future main() async {
+  await DotEnv().load('.env');
+  runApp(MoskaApp());
 }
 
-class _MyAppState extends State<MyApp> {
+class MoskaApp extends StatefulWidget {
+  @override
+  _MoskaAppState createState() => _MoskaAppState();
+}
+
+class _MoskaAppState extends State<MoskaApp> {
   DarkThemeProvider themeChangeProvider = new DarkThemeProvider();
 
   @override
