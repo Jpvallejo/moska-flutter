@@ -19,10 +19,10 @@ Future<List<CreditCard>> getCreditCards() async {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     Map<String, dynamic> map = jsonDecode(response.body);
-    print(map.values);
-    List<CreditCard> ccObjs = map.values
-        .map<CreditCard>((record) => CreditCard.fromJson(record))
-        .toList();
+    List<CreditCard> ccObjs = new List<CreditCard>();
+    map.forEach((key,value) => {
+      ccObjs.add(CreditCard.fromJson(value, key))
+    });
     print(ccObjs);
     return ccObjs;
   } else {
