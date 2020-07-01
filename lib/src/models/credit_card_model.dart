@@ -1,13 +1,12 @@
 class CreditCard {
-    String id;
-    String name;
-    bool hasLimit;
-    int limit;
-    int closingDay;
-    int paymentDay;
+  String id;
+  String name;
+  bool hasLimit;
+  int limit;
+  int closingDay;
+  int paymentDay;
 
-    static fromJson(dynamic parsedJson, String id) {
-      print(parsedJson);
+  static fromJson(dynamic parsedJson, String id) {
     CreditCard creditCard = new CreditCard();
     creditCard.id = id;
     creditCard.closingDay = int.parse(parsedJson['closingDay']);

@@ -23,7 +23,7 @@ Future<List<CreditCard>> getCreditCards() async {
     map.forEach((key,value) => {
       ccObjs.add(CreditCard.fromJson(value, key))
     });
-    print(ccObjs);
+
     return ccObjs;
   } else {
     throw Exception('Failed to get Auth');

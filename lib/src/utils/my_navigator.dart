@@ -14,4 +14,8 @@ class MyNavigator {
   static void goToProfile(BuildContext context) {
     Navigator.pushNamed(context, "/profile");
   }
+
+  static void goToCCExpenses(BuildContext context) {
+    Navigator.pushNamed(context, "/ccExpense");
+  }
 }

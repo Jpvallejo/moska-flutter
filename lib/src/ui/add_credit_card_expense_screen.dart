@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:moska_app/src/models/credit_card_model.dart';
 import 'package:moska_app/src/services/credit_card_expense_service.dart';
 import 'package:moska_app/src/services/credit_card_service.dart';
-import 'package:moska_app/src/ui/credit_card_dropdown.dart';
+import 'package:moska_app/src/utils/UnauthorizedException.dart';
 import 'package:moska_app/src/utils/datepicker.dart';
 import 'package:moska_app/src/utils/my_navigator.dart';
 
@@ -83,13 +83,16 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
           ),
           new ListTile(
             leading: const Icon(Icons.credit_card),
-            //  title: new CreditCardDropDown(),
             title: FutureBuilder<List<CreditCard>>(
                 future: getCreditCards(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
-                    //print('project snapshot data is: ${snap.data}');
                     return Text("loading");
+                  } else if (snapshot.hasError) {
+                    if (snapshot.error is UnauthorizedException) {
+                      MyNavigator.goToLogin(context);
+                    }
+                    return Text(snapshot.error.toString());
                   } else {
                     return DropdownButton<String>(
                         hint: Text("Credit Card"),
@@ -165,10 +168,9 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
   onSubmit() {
     String description = descriptionController.text;
     double amount = amountController.numberValue;
+
     saveCreditCardExpense(_withPayments, numberOfPayments, amount, "ARS",
             description, selectedCreditCard, date)
-        .then((result) => {
-          MyNavigator.goToHome(context)
-        });
+        .then((result) => {MyNavigator.goToHome(context)});
   }
 }

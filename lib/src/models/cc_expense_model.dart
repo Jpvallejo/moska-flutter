@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:moska_app/src/models/transaction_model.dart';
 
 class CCExpenseModel extends TransactionModel {
@@ -7,9 +8,10 @@ class CCExpenseModel extends TransactionModel {
     CCExpenseModel expense = new CCExpenseModel();
     expense.id = id;
     expense.creditCardId = parsedJson['creditCardId'];
-    expense.date = DateTime.parse(parsedJson['date']);
-    expense.amount = parsedJson['amount'];
+    expense.date = DateFormat('dd/MM/yyyy').parse(parsedJson['date']);
+    expense.amount = double.parse(parsedJson['amount'].toString());
     expense.currency = parsedJson['currency'];
+    expense.description = parsedJson['description'];
 
     return expense;
   }
