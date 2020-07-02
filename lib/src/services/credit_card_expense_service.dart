@@ -40,6 +40,34 @@ Future<List<CCExpenseModel>> getCreditCardExpenses(String creditCardId, int mont
   }
 }
 
+Future<double> getCCExpensesSum(String creditCardId, int month, int year) async {
+  final storage = new FlutterSecureStorage();
+  final authToken = await storage.read(key: 'authToken') ?? '';
+  dynamic headers = {
+    "X-JWT-Token": authToken,
+    'content-type': 'application/json'
+  };
+
+  final response = await http.get(url + "/byAccount/$creditCardId?month=$month&year=$year" , headers: headers);
+
+  if (response.statusCode == 200) {
+    renewAuthToken(response);
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    Map<String, dynamic> map = jsonDecode(response.body);
+    double sum = 0;
+    map.forEach(
+        (key, value) => { sum += value["amount"]});
+
+    return sum;
+  } else if(response.statusCode == 401) {
+    throw UnauthorizedException("Unauthorized");
+  }
+  else {
+    throw Exception('There\'s no credit card expenses');
+  }
+}
+
 Future<String> saveCreditCardExpense(
     bool hasPayments,
     int payments,

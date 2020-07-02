@@ -16,63 +16,89 @@ class CCExpensesScreen extends StatefulWidget {
 class _CCExpensesScreenState extends State<CCExpensesScreen> {
   List<ListTile> rows;
   DateTime date = DateTime.now();
+  double totalAmount = 0;
 
   @override
   Widget build(BuildContext context) {
     final CreditCard args = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
-        appBar: new AppBar(
-          title: new Text(args.name),
-          actions: <Widget>[
-            new IconButton(
-              icon: Icon(CupertinoIcons.profile_circled),
-              onPressed: () {
-                MyNavigator.goToProfile(context);
-              },
+      appBar: new AppBar(
+        title: new Text(args.name),
+        actions: <Widget>[
+          new IconButton(
+            icon: Icon(CupertinoIcons.profile_circled),
+            onPressed: () {
+              MyNavigator.goToProfile(context);
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+          child: Column(
+        children: <Widget>[
+          ListTile(
+            leading: IconButton(
+              icon: new Icon(Icons.keyboard_arrow_left),
+              onPressed: onDecreaseMonth,
             ),
-          ],
-        ),
-        body: SingleChildScrollView(
-            child: Column(
-          children: <Widget>[
-            ListTile(
-              leading: IconButton(
-                icon: new Icon(Icons.keyboard_arrow_left),
-                onPressed: onDecreaseMonth,
-              ),
-              title: new Text(
-                DateFormat(DateFormat.ABBR_MONTH).format(date),
-                textAlign: TextAlign.center,
-              ),
-              trailing: IconButton(
-                icon: new Icon(Icons.keyboard_arrow_right),
-                onPressed: onIncreaseMonth,
-              ),
+            title: new Text(
+              DateFormat(DateFormat.ABBR_MONTH).format(date),
+              textAlign: TextAlign.center,
             ),
-            FutureBuilder<List<CCExpenseModel>>(
-                future: getCreditCardExpenses(args.id, date.month, date.year),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return Text("loading");
-                  } else if (snapshot.hasError) {
-                    if (snapshot.error is UnauthorizedException) {
-                      MyNavigator.goToLogin(context);
-                    }
-                    return Text(snapshot.error.toString());
-                  } else {
-                    rows = snapshot.data
-                        .map((cc) => ListTile(
-                              leading: Icon(Icons.credit_card),
-                              title: Text(cc.description ?? ''),
-                              trailing: Text(cc.amount.toString()),
-                            ))
-                        .toList();
-                    return Column(children: rows);
+            trailing: IconButton(
+              icon: new Icon(Icons.keyboard_arrow_right),
+              onPressed: onIncreaseMonth,
+            ),
+          ),
+          FutureBuilder<List<CCExpenseModel>>(
+              future: getCreditCardExpenses(args.id, date.month, date.year),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return Text("loading");
+                } else if (snapshot.hasError) {
+                  if (snapshot.error is UnauthorizedException) {
+                    MyNavigator.goToLogin(context);
                   }
-                }),
-          ],
-        )));
+                  return Text(snapshot.error.toString());
+                } else {
+                  rows = snapshot.data.map((cc) => createCCRow(cc)).toList();
+                  return Column(children: rows);
+                }
+              }),
+        ],
+      )),
+      bottomNavigationBar: BottomAppBar(
+        child: FutureBuilder<double>(
+          future: getCCExpensesSum(args.id, date.month, date.year),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Text("loading");
+            } else if (snapshot.hasError) {
+              if (snapshot.error is UnauthorizedException) {
+                MyNavigator.goToLogin(context);
+              }
+              return Text(snapshot.error.toString());
+            } else {
+              return Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Text("Total: "),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text(snapshot.data.toString())),
+                ],
+              );
+            }
+          },
+        ),
+        color: Colors.grey,
+      ),
+    );
   }
 
   onDecreaseMonth() {
@@ -85,5 +111,13 @@ class _CCExpensesScreenState extends State<CCExpensesScreen> {
     setState(() {
       date = new DateTime(date.year, date.month + 1, 1);
     });
+  }
+
+  ListTile createCCRow(CCExpenseModel cc) {
+    return ListTile(
+      leading: Icon(Icons.credit_card),
+      title: Text(cc.description ?? ''),
+      trailing: Text(cc.amount.toString()),
+    );
   }
 }

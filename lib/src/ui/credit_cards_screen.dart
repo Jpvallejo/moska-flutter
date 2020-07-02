@@ -34,7 +34,7 @@ class _CreditCardsScreenState extends State<CreditCardsScreen> {
                           onTap: () {
                             MyNavigator.goToCCExpenses(context, cc);
                           },
-                          child: Icon(Icons.calendar_today),
+                          child: Icon(Icons.credit_card),
                         ),
                         title: GestureDetector(
                             onTap: () {
