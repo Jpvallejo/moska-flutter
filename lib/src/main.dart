@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:moska_app/src/models/credit_card_model.dart';
 import 'package:moska_app/src/resources/dark_theme_provider.dart';
 import 'package:moska_app/src/ui/add_credit_card_expense_screen.dart';
 import 'package:moska_app/src/ui/credit_card_expenses_screen.dart';
+import 'package:moska_app/src/ui/credit_cards_screen.dart';
 import 'package:moska_app/src/ui/home_screen.dart';
 import 'package:moska_app/src/ui/login_screen.dart';
 import 'package:moska_app/src/ui/profile_screen.dart';
@@ -14,7 +16,8 @@ var routes = <String, WidgetBuilder>{
   '/ccExpense/create': (BuildContext context) => AddCCExpenseScreen(),
   '/login': (BuildContext context) => LoginScreen(),
   '/profile': (BuildContext context) => ProfileScreen(),
-  '/ccExpense': (BuildContext context) => CCExpensesScreen()
+  '/ccExpense': (BuildContext context) => CCExpensesScreen(),
+  '/creditCards': (BuildContext context) => CreditCardsScreen()
 };
 
 Future main() async {

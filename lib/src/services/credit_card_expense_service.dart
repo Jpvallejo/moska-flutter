@@ -12,7 +12,7 @@ import 'auth_service.dart';
 
 String url = DotEnv().env['BASE_API_URL'] + "/ccSpendings";
 
-Future<List<CCExpenseModel>> getCreditCardExpenses(String creditCardId) async {
+Future<List<CCExpenseModel>> getCreditCardExpenses(String creditCardId, int month, int year) async {
   final storage = new FlutterSecureStorage();
   final authToken = await storage.read(key: 'authToken') ?? '';
   dynamic headers = {
@@ -20,7 +20,7 @@ Future<List<CCExpenseModel>> getCreditCardExpenses(String creditCardId) async {
     'content-type': 'application/json'
   };
 
-  final response = await http.get(url + '/byAccount/' + creditCardId, headers: headers);
+  final response = await http.get(url + "/byAccount/$creditCardId?month=$month&year=$year" , headers: headers);
 
   if (response.statusCode == 200) {
     renewAuthToken(response);

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:moska_app/src/ui/budget_screen.dart';
 import 'package:moska_app/src/ui/credit_card_expenses_screen.dart';
+import 'package:moska_app/src/ui/credit_cards_screen.dart';
 import 'package:moska_app/src/ui/dasboard_screen.dart';
 import 'package:moska_app/src/ui/more_options_screen.dart';
 import 'package:moska_app/src/ui/new_item_screen.dart';
@@ -20,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _children = [
     DashboardScreen(),
     // TransactionsScreen(),
-    CCExpensesScreen(),
+    CreditCardsScreen(),
     NewItemScreen(),
     BudgetScreen(),
     MoreOptionsScreen(),
