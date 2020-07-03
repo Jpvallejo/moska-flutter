@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:moska_app/src/models/credit_card_model.dart';
 import 'package:moska_app/src/models/credit_card_view_model.dart';
 import 'package:moska_app/src/services/credit_card_expense_service.dart';
+import 'package:moska_app/src/utils/moska_cache_manager.dart';
 
 Future<List<CreditCardViewModel>> getCreditCards() async {
   DateTime date = DateTime.now();
@@ -16,8 +19,22 @@ Future<List<CreditCardViewModel>> getCreditCards() async {
     'content-type': 'application/json'
   };
   String url = DotEnv().env['BASE_API_URL'] + "/creditCards";
-  final response = await http.get(url, headers: headers);
-  
+  Response response;
+
+  var file = await MoskaCacheManager().getSingleFile(url, headers: headers);
+  print(file.path);
+  if (file != null && await file.exists()) {
+    var res = await file.readAsString();
+    response = Response(res, 200);
+  } 
+  else {
+    response = Response("Error",400);
+  }
+  // else {
+  //   response = await http.get(url, headers: headers);
+  //   MoskaCacheManager().putFile(url, response.bodyBytes);
+  // }
+
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
@@ -26,15 +43,11 @@ Future<List<CreditCardViewModel>> getCreditCards() async {
     List<CreditCard> cards = new List<CreditCard>();
     CreditCardViewModel model;
     double amount;
-    map.forEach((key,value) async => {
-      cards.add(CreditCard.fromJson(value, key))
-    });
-    for(var card in cards){
-      print(card);
+    map.forEach(
+        (key, value) async => {cards.add(CreditCard.fromJson(value, key))});
+    for (var card in cards) {
       amount = await getCCExpensesSum(card.id, date.month, date.year);
-      print(amount);
       model = new CreditCardViewModel(card.id, card.name, amount);
-      print(model.id + " " + model.name + " " + model.totalAmount.toString());
       ccObjs.add(model);
     }
 
@@ -44,4 +57,13 @@ Future<List<CreditCardViewModel>> getCreditCards() async {
   } else {
     throw Exception('Failed to get Auth');
   }
+}
+
+Future<Response> getData(String url, Map<String, String> headers) async {
+  var file = await MoskaCacheManager().getSingleFile(url, headers: headers);
+  if (file != null && await file.exists()) {
+    var res = await file.readAsString();
+    return Response(res, 200);
+  }
+  return Response(null, 404);
 }
