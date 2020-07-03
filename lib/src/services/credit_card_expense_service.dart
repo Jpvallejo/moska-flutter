@@ -68,6 +68,42 @@ Future<double> getCCExpensesSum(String creditCardId, int month, int year) async 
   }
 }
 
+Future<double> getCCExpensesTotalSum(List<String> ids) async {
+  DateTime date = DateTime.now();
+  int month = date.month;
+  int year = date.year;
+  final storage = new FlutterSecureStorage();
+  final authToken = await storage.read(key: 'authToken') ?? '';
+  double totalAmount = 0;
+  dynamic headers = {
+    "X-JWT-Token": authToken,
+    'content-type': 'application/json'
+  };
+
+  ids.forEach((creditCardId) async {
+    final response = await http.get(url + "/byAccount/$creditCardId?month=$month&year=$year" , headers: headers);
+
+  if (response.statusCode == 200) {
+    renewAuthToken(response);
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    Map<String, dynamic> map = jsonDecode(response.body);
+    double sum = 0;
+    map.forEach(
+        (key, value) => { sum += value["amount"]});
+
+    totalAmount += sum;
+  } else if(response.statusCode == 401) {
+    throw UnauthorizedException("Unauthorized");
+  }
+  else {
+    throw Exception('There\'s no credit card expenses');
+  }
+  });
+
+  return totalAmount;
+}
+
 Future<String> saveCreditCardExpense(
     bool hasPayments,
     int payments,
@@ -111,7 +147,10 @@ Future<String> saveCreditCardExpense(
 
   if (response.statusCode == 201) {
     return response.body;
-  } else {
+  } else if (response.statusCode == 401) {
+    throw UnauthorizedException(response.body);
+  }
+  else {
     throw Exception(response.body);
   }
 

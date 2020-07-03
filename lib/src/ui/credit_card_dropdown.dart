@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moska_app/src/models/credit_card_model.dart';
+import 'package:moska_app/src/models/credit_card_view_model.dart';
 import 'package:moska_app/src/services/credit_card_service.dart';
 
 class CreditCardDropDown extends StatefulWidget {
@@ -11,9 +11,9 @@ class CreditCardDropDown extends StatefulWidget {
 
 class CreditCardDropDownState extends State<CreditCardDropDown> {
   //
-  List<CreditCard> _creditCards = new List<CreditCard>();
-  List<DropdownMenuItem<CreditCard>> _dropdownMenuItems;
-  CreditCard _selectedCreditCard;
+  List<CreditCardViewModel> _creditCards = new List<CreditCardViewModel>();
+  List<DropdownMenuItem<CreditCardViewModel>> _dropdownMenuItems;
+  CreditCardViewModel _selectedCreditCard;
 
   @override
   void initState() {
@@ -25,9 +25,9 @@ class CreditCardDropDownState extends State<CreditCardDropDown> {
     super.initState();
   }
 
-  List<DropdownMenuItem<CreditCard>> buildDropdownMenuItems(List companies) {
-    List<DropdownMenuItem<CreditCard>> items = List();
-    for (CreditCard company in companies) {
+  List<DropdownMenuItem<CreditCardViewModel>> buildDropdownMenuItems(List companies) {
+    List<DropdownMenuItem<CreditCardViewModel>> items = List();
+    for (CreditCardViewModel company in companies) {
       items.add(
         DropdownMenuItem(
           value: company,
@@ -38,7 +38,7 @@ class CreditCardDropDownState extends State<CreditCardDropDown> {
     return items;
   }
 
-  onChangeDropdownItem(CreditCard selectedCreditCard) {
+  onChangeDropdownItem(CreditCardViewModel selectedCreditCard) {
     setState(() {
       _selectedCreditCard = selectedCreditCard;
     });

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:intl/intl.dart';
 import 'package:moska_app/src/models/credit_card_model.dart';
+import 'package:moska_app/src/models/credit_card_view_model.dart';
 import 'package:moska_app/src/services/credit_card_expense_service.dart';
 import 'package:moska_app/src/services/credit_card_service.dart';
 import 'package:moska_app/src/utils/UnauthorizedException.dart';
@@ -26,6 +27,17 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
   DateTime date = DateTime.now();
   DatePicker datePicker;
   String selectedCreditCard;
+
+  Future<List<CreditCardViewModel>> creditCardsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // assign this variable your Future
+    creditCardsFuture = getCreditCards().catchError((error) =>
+        {if (error is UnauthorizedException) MyNavigator.goToLogin(context)});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +95,8 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
           ),
           new ListTile(
             leading: const Icon(Icons.credit_card),
-            title: FutureBuilder<List<CreditCard>>(
-                future: getCreditCards(),
+            title: FutureBuilder<List<CreditCardViewModel>>(
+                future: creditCardsFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
                     return Text("loading");
@@ -171,6 +183,9 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
 
     saveCreditCardExpense(_withPayments, numberOfPayments, amount, "ARS",
             description, selectedCreditCard, date)
-        .then((result) => {MyNavigator.goToHome(context)});
+        .then((result) => {MyNavigator.goToHome(context)})
+        .catchError((error) => {
+              if (error is UnauthorizedException) MyNavigator.goToLogin(context)
+            });
   }
 }

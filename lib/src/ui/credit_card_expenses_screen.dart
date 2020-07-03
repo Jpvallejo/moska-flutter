@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:intl/intl.dart';
 import 'package:moska_app/src/models/cc_expense_model.dart';
-import 'package:moska_app/src/models/credit_card_model.dart';
+import 'package:moska_app/src/models/credit_card_view_model.dart';
 import 'package:moska_app/src/services/credit_card_expense_service.dart';
 import 'package:moska_app/src/utils/UnauthorizedException.dart';
 import 'package:moska_app/src/utils/my_navigator.dart';
@@ -17,10 +18,10 @@ class _CCExpensesScreenState extends State<CCExpensesScreen> {
   List<ListTile> rows;
   DateTime date = DateTime.now();
   double totalAmount = 0;
-
+  final oCcy = new NumberFormat("#,##0.00", "en_US");
   @override
   Widget build(BuildContext context) {
-    final CreditCard args = ModalRoute.of(context).settings.arguments;
+    final CreditCardViewModel args = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
       appBar: new AppBar(
@@ -90,7 +91,8 @@ class _CCExpensesScreenState extends State<CCExpensesScreen> {
                   ),
                   Padding(
                       padding: const EdgeInsets.all(15.0),
-                      child: Text(snapshot.data.toString())),
+                      child: Text(oCcy.format(snapshot.data)),
+                  )
                 ],
               );
             }

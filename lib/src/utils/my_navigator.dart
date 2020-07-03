@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moska_app/src/models/credit_card_model.dart';
+import 'package:moska_app/src/models/credit_card_view_model.dart';
 
 class MyNavigator {
   static void goToHome(BuildContext context) {
@@ -20,7 +20,7 @@ class MyNavigator {
     Navigator.pushNamed(context, "/creditCards");
   }
 
-  static void goToCCExpenses(BuildContext context, CreditCard selectedCard) {
+  static void goToCCExpenses(BuildContext context, CreditCardViewModel selectedCard) {
     Navigator.pushNamed(context, "/ccExpense", arguments: selectedCard);
   }
 }
