@@ -158,3 +158,27 @@ Future<String> saveCreditCardExpense(
   }
 
 }
+
+
+Future<String> deleteCCExpense(CCExpenseModel expense) async {
+  final storage = new FlutterSecureStorage();
+  final authToken = await storage.read(key: 'authToken') ?? '';
+  dynamic headers = {
+    "X-JWT-Token": authToken,
+    'content-type': 'application/json'
+  };
+  MoskaCacheManager().removeFile(url + "/byAccount/${expense.creditCardId}?month=${expense.date.month}&year=${expense.date.year}");
+  var finalUrl = url + "/${expense.id}";
+  final response = await http.delete(finalUrl , headers: headers);
+  print(expense.creditCardId);
+  print(response.body);
+  if (response.statusCode == 200) {
+    renewAuthToken(response);
+    return response.body;
+  } else if(response.statusCode == 401) {
+    throw UnauthorizedException("Unauthorized");
+  }
+  else {
+    throw Exception('There\'s no credit card expenses');
+  }
+}

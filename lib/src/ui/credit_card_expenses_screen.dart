@@ -15,15 +15,18 @@ class CCExpensesScreen extends StatefulWidget {
 }
 
 class _CCExpensesScreenState extends State<CCExpensesScreen> {
-  List<ListTile> rows;
+  List<Dismissible> rows;
+  List<CCExpenseModel> data;
   DateTime date = DateTime.now();
   double totalAmount = 0;
   final oCcy = new NumberFormat("#,##0.00", "en_US");
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final CreditCardViewModel args = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: new AppBar(
         title: new Text(args.name),
         actions: <Widget>[
@@ -63,8 +66,16 @@ class _CCExpensesScreenState extends State<CCExpensesScreen> {
                   }
                   return Text(snapshot.error.toString());
                 } else {
-                  rows = snapshot.data.map((cc) => createCCRow(cc)).toList();
-                  return Column(children: rows);
+                  // rows = snapshot.data.map((cc) => createCCRow(cc)).toList();
+                  data = snapshot.data;
+                  return Container(
+                      height: 100.0,
+                      child: ListView.builder(
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (context, index) {
+                            final item = data[index];
+                            return createCCRow(item, snapshot.data, index);
+                          }));
                 }
               }),
         ],
@@ -90,8 +101,8 @@ class _CCExpensesScreenState extends State<CCExpensesScreen> {
                     child: Text("Total: "),
                   ),
                   Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Text(oCcy.format(snapshot.data)),
+                    padding: const EdgeInsets.all(15.0),
+                    child: Text(oCcy.format(snapshot.data)),
                   )
                 ],
               );
@@ -115,11 +126,73 @@ class _CCExpensesScreenState extends State<CCExpensesScreen> {
     });
   }
 
-  ListTile createCCRow(CCExpenseModel cc) {
-    return ListTile(
-      leading: Icon(Icons.credit_card),
-      title: Text(cc.description ?? ''),
-      trailing: Text(cc.amount.toString()),
+  Dismissible createCCRow(
+      CCExpenseModel cc, List<CCExpenseModel> data, int index) {
+    return Dismissible(
+      // Each Dismissible must contain a Key. Keys allow Flutter to
+      // uniquely identify widgets.
+      key: Key(cc.id),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (DismissDirection direction) async {
+        return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: const Text("Confirm"),
+              content: const Text("Are you sure you wish to delete this item?"),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text("Cancel",
+                        style: TextStyle(color: Colors.red))),
+                FlatButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text(
+                    "Yes",
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      // Provide a function that tells the app
+      // what to do after an item has been swiped away.
+      onDismissed: (direction) async {
+        // Remove the item from the data source.
+        await deleteCCExpense(cc);
+        setState(() {
+          data.removeAt(index);
+        });
+
+        // Then show a snackbar.
+        displaySnackBar(context);
+      },
+      // Show a red background as the item is swiped away.
+      background: Container(
+          color: Colors.red,
+          child: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  "Delete",
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.end,
+                ),
+              ))),
+      child: ListTile(
+        leading: Icon(Icons.credit_card),
+        title: Text(cc.description ?? ''),
+        trailing: Text(cc.amount.toString()),
+      ),
     );
+  }
+
+  displaySnackBar(BuildContext context) {
+    final snackBar = SnackBar(content: Text('Item deleted'));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 }

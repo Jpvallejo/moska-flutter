@@ -22,7 +22,6 @@ Future<List<CreditCardViewModel>> getCreditCards() async {
   Response response;
 
   var file = await MoskaCacheManager().getSingleFile(url, headers: headers);
-  print(file.path);
   if (file != null && await file.exists()) {
     var res = await file.readAsString();
     response = Response(res, 200);
@@ -51,19 +50,18 @@ Future<List<CreditCardViewModel>> getCreditCards() async {
       ccObjs.add(model);
     }
 
-    print(ccObjs);
-
     return ccObjs;
   } else {
     throw Exception('Failed to get Auth');
   }
 }
 
-Future<Response> getData(String url, Map<String, String> headers) async {
-  var file = await MoskaCacheManager().getSingleFile(url, headers: headers);
-  if (file != null && await file.exists()) {
-    var res = await file.readAsString();
-    return Response(res, 200);
+Future<double> getCreditCardsSum() async {
+  var creditCards = await getCreditCards();
+  double totalAmount = 0;
+  for (var card in creditCards ) {
+    totalAmount += card.totalAmount;
   }
-  return Response(null, 404);
+
+  return totalAmount;
 }
