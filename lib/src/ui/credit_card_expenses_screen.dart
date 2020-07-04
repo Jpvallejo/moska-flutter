@@ -68,14 +68,16 @@ class _CCExpensesScreenState extends State<CCExpensesScreen> {
                 } else {
                   // rows = snapshot.data.map((cc) => createCCRow(cc)).toList();
                   data = snapshot.data;
-                  return Container(
-                      height: 100.0,
-                      child: ListView.builder(
+                  return ListView.builder(
+                    
+                    physics: NeverScrollableScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
                           itemCount: snapshot.data.length,
                           itemBuilder: (context, index) {
                             final item = data[index];
                             return createCCRow(item, snapshot.data, index);
-                          }));
+                          });
                 }
               }),
         ],
