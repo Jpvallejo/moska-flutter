@@ -14,6 +14,7 @@ Future<String> getAuthToken(String email, String displayName)  async {
   if (response.statusCode == 200) {
     return json.decode(response.body)["token"] as String;
   } else {
+    print(response.statusCode);
     throw Exception('Failed to get Auth');
   }
 }

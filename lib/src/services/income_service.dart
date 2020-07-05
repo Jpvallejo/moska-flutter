@@ -5,16 +5,16 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:moska_app/src/models/cc_expense_model.dart';
+import 'package:moska_app/src/models/income_model.dart';
 import 'package:moska_app/src/utils/UnauthorizedException.dart';
 import 'package:moska_app/src/utils/moska_cache_manager.dart';
 import 'package:moska_app/src/utils/my_navigator.dart';
 
 import 'auth_service.dart';
 
-String url = DotEnv().env['BASE_API_URL'] + "/ccSpendings";
+String url = DotEnv().env['BASE_API_URL'] + "/incomes";
 
-Future<List<CCExpenseModel>> getCreditCardExpenses(String creditCardId, int month, int year) async {
+Future<List<IncomeModel>> getIncomes(String accountId, int month, int year) async {
   final storage = new FlutterSecureStorage();
   final authToken = await storage.read(key: 'authToken') ?? '';
   dynamic headers = {
@@ -22,7 +22,7 @@ Future<List<CCExpenseModel>> getCreditCardExpenses(String creditCardId, int mont
     'content-type': 'application/json'
   };
   Response response;
-    var finalUrl = url + "/byAccount/$creditCardId?month=$month&year=$year";
+    var finalUrl = url + "/byAccount/$accountId?month=$month&year=$year";
     var file = await MoskaCacheManager().getSingleFile(finalUrl, headers: headers);
     if (file != null && await file.exists()) {
       var res = await file.readAsString();
@@ -37,20 +37,20 @@ Future<List<CCExpenseModel>> getCreditCardExpenses(String creditCardId, int mont
     // If the server did return a 200 OK response,
     // then parse the JSON.
     Map<String, dynamic> map = jsonDecode(response.body);
-    List<CCExpenseModel> ccObjs = new List<CCExpenseModel>();
+    List<IncomeModel> ccObjs = new List<IncomeModel>();
     map.forEach(
-        (key, value) => {ccObjs.add(CCExpenseModel.fromJson(value, key))});
+        (key, value) => {ccObjs.add(IncomeModel.fromJson(value, key))});
 
     return ccObjs;
   } else if(response.statusCode == 401) {
     throw UnauthorizedException("Unauthorized");
   }
   else {
-    throw Exception('There\'s no credit card expenses');
+    throw Exception('There\'s no credit card incomes');
   }
 }
 
-Future<double> getCCExpensesSum(String creditCardId, int month, int year) async {
+Future<double> getIncomesSum(String accountId, int month, int year) async {
   final storage = new FlutterSecureStorage();
   final authToken = await storage.read(key: 'authToken') ?? '';
   dynamic headers = {
@@ -58,7 +58,7 @@ Future<double> getCCExpensesSum(String creditCardId, int month, int year) async 
     'content-type': 'application/json'
   };
   Response response;
-  var finalUrl = url + "/byAccount/$creditCardId?month=$month&year=$year";
+  var finalUrl = url + "/byAccount/$accountId?month=$month&year=$year";
   var file = await MoskaCacheManager().getSingleFile(finalUrl, headers: headers);
   if (file != null && await file.exists()) {
     var res = await file.readAsString();
@@ -67,7 +67,6 @@ Future<double> getCCExpensesSum(String creditCardId, int month, int year) async 
   else {
     response = Response("Error",400);
   }
-  //final response = await http.get(url + "/byAccount/$creditCardId?month=$month&year=$year" , headers: headers);
 
   if (response.statusCode == 200) {
     renewAuthToken(response);
@@ -83,36 +82,28 @@ Future<double> getCCExpensesSum(String creditCardId, int month, int year) async 
     throw UnauthorizedException("Unauthorized");
   }
   else {
-    throw Exception('There\'s no credit card expenses');
+    throw Exception('There\'s no credit card incomes');
   }
 }
 
-Future<double> getCCExpensesTotalSum(List<String> ids) async {
+Future<double> getIncomesTotalSum(List<String> ids) async {
   DateTime date = DateTime.now();
   int month = date.month;
   int year = date.year;
-  final storage = new FlutterSecureStorage();
-  final authToken = await storage.read(key: 'authToken') ?? '';
   double totalAmount = 0;
-  dynamic headers = {
-    "X-JWT-Token": authToken,
-    'content-type': 'application/json'
-  };
 
-  ids.forEach((creditCardId) async {
-    totalAmount += await getCCExpensesSum(creditCardId, month, year);
+  ids.forEach((accountId) async {
+    totalAmount += await getIncomesSum(accountId, month, year);
   });
 
   return totalAmount;
 }
 
-Future<String> saveCreditCardExpense(
-    bool hasPayments,
-    int payments,
+Future<String> saveIncome(
     double amount,
     String currency,
     String description,
-    String creditCardId,
+    String accountId,
     DateTime date) async {
   final storage = new FlutterSecureStorage();
   final authToken = await storage.read(key: 'authToken') ?? '';
@@ -120,33 +111,17 @@ Future<String> saveCreditCardExpense(
     "X-JWT-Token": authToken,
     'content-type': 'application/json'
   };
-  String postUrl;
-  dynamic body;
-  if (hasPayments) {
-    body = {
-      "payments": payments,
-      "spending": {
-        "amount": amount,
-        "currency": currency,
-        "description": description,
-        "creditCardId": creditCardId,
-        "date": DateFormat('MM-dd-yyyy').format(date)
-      }
-    };
-    postUrl = url + "/payments";
-  } else {
-    postUrl = url;
+  dynamic 
     body = {
       "amount": amount,
       "currency": currency,
       "description": description,
-      "creditCardId": creditCardId,
+      "accountId": accountId,
       "date": DateFormat('MM-dd-yyyy').format(date)
     };
-  }
 
-  MoskaCacheManager().removeFile(url + "/byAccount/$creditCardId?month=${date.month}&year=${date.year}");
-  final response = await http.post(postUrl, headers: headers, body: utf8.encode(json.encode(body)));
+  MoskaCacheManager().removeFile(url + "/byAccount/$accountId?month=${date.month}&year=${date.year}");
+  final response = await http.post(url, headers: headers, body: utf8.encode(json.encode(body)));
 
   if (response.statusCode == 201) {
     return response.body;
@@ -160,15 +135,15 @@ Future<String> saveCreditCardExpense(
 }
 
 
-Future<String> deleteCCExpense(CCExpenseModel expense) async {
+Future<String> deleteIncome(IncomeModel income) async {
   final storage = new FlutterSecureStorage();
   final authToken = await storage.read(key: 'authToken') ?? '';
   dynamic headers = {
     "X-JWT-Token": authToken,
     'content-type': 'application/json'
   };
-  MoskaCacheManager().removeFile(url + "/byAccount/${expense.creditCardId}?month=${expense.date.month}&year=${expense.date.year}");
-  var finalUrl = url + "/${expense.id}";
+  MoskaCacheManager().removeFile(url + "/${income.accountId}?month=${income.date.month}&year=${income.date.year}");
+  var finalUrl = url + "/${income.id}";
   final response = await http.delete(finalUrl , headers: headers);
 
   if (response.statusCode == 200) {
@@ -178,6 +153,6 @@ Future<String> deleteCCExpense(CCExpenseModel expense) async {
     throw UnauthorizedException("Unauthorized");
   }
   else {
-    throw Exception('There\'s no credit card expenses');
+    throw Exception('There\'s no credit card incomes');
   }
 }

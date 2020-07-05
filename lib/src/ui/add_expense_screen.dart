@@ -2,39 +2,36 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:intl/intl.dart';
+import 'package:moska_app/src/models/account_view_model.dart';
 import 'package:moska_app/src/models/credit_card_view_model.dart';
-import 'package:moska_app/src/services/credit_card_expense_service.dart';
-import 'package:moska_app/src/services/credit_card_service.dart';
+import 'package:moska_app/src/services/account_service.dart';
+import 'package:moska_app/src/services/expense_service.dart';
 import 'package:moska_app/src/utils/UnauthorizedException.dart';
 import 'package:moska_app/src/utils/datepicker.dart';
 import 'package:moska_app/src/utils/my_navigator.dart';
 
-class AddCCExpenseScreen extends StatefulWidget {
-  AddCCExpenseScreen({Key key}) : super(key: key);
+class AddExpenseScreen extends StatefulWidget {
+  AddExpenseScreen({Key key}) : super(key: key);
   @override
-  _AddCCExpenseScreenState createState() => new _AddCCExpenseScreenState();
+  _AddExpenseScreenState createState() => new _AddExpenseScreenState();
 }
 
-class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
-  bool _withPayments = false;
-  int numberOfPayments = 1;
+class _AddExpenseScreenState extends State<AddExpenseScreen> {
   MoneyMaskedTextController amountController =
-      MoneyMaskedTextController(decimalSeparator: ',', thousandSeparator: '.');
-  MoneyMaskedTextController paymentAmountController =
       MoneyMaskedTextController(decimalSeparator: ',', thousandSeparator: '.');
   TextEditingController descriptionController = new TextEditingController();
   DateTime date = DateTime.now();
   DatePicker datePicker;
-  String selectedCreditCard;
+  String selectedAccount;
 
-  Future<List<CreditCardViewModel>> creditCardsFuture;
+  Future<List<AccountViewModel>> accountsFuture;
 
   @override
   void initState() {
     super.initState();
 
     // assign this variable your Future
-    creditCardsFuture = getCreditCards().catchError((error) =>
+    accountsFuture = getAccounts().catchError((error) =>
         {if (error is UnauthorizedException) MyNavigator.goToLogin(context)});
   }
 
@@ -44,7 +41,7 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
 
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Card Expense'),
+        title: new Text('Expense'),
         actions: <Widget>[
           new IconButton(
               icon: const Icon(Icons.save),
@@ -61,13 +58,7 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
                 controller: amountController,
                 decoration: new InputDecoration(
                   hintText: "Amount",
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    paymentAmountController.updateValue(
-                        amountController.numberValue / numberOfPayments);
-                  });
-                }),
+                )),
           ),
           new ListTile(
               leading: GestureDetector(
@@ -94,8 +85,8 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
           ),
           new ListTile(
             leading: const Icon(Icons.credit_card),
-            title: FutureBuilder<List<CreditCardViewModel>>(
-                future: creditCardsFuture,
+            title: FutureBuilder<List<AccountViewModel>>(
+                future: accountsFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
                     return Text("loading");
@@ -106,11 +97,11 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
                     return Text(snapshot.error.toString());
                   } else {
                     return DropdownButton<String>(
-                        hint: Text("Credit Card"),
-                        value: selectedCreditCard,
+                        hint: Text("Account"),
+                        value: selectedAccount,
                         onChanged: (newValue) {
                           setState(() {
-                            selectedCreditCard = newValue;
+                            selectedAccount = newValue;
                           });
                         },
                         items: snapshot.data
@@ -122,52 +113,9 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
                   }
                 }),
           ),
-          new ListTile(
-            leading: const Icon(Icons.refresh),
-            title: const Text('Payments'),
-            trailing: Switch(
-              value: _withPayments,
-              onChanged: (value) {
-                setState(() {
-                  _withPayments = value;
-                });
-              },
-            ),
-          ),
-          Visibility(
-            visible: _withPayments,
-            child: new ListTile(
-              leading: IconButton(
-                icon: new Icon(Icons.keyboard_arrow_left),
-                onPressed: numberOfPayments > 1 ? onDecreasePayments : null,
-              ),
-              title: new Text(
-                  "$numberOfPayments x ${paymentAmountController.text}"),
-              trailing: IconButton(
-                icon: new Icon(Icons.keyboard_arrow_right),
-                onPressed: onIncreasePayments,
-              ),
-            ),
-          )
         ],
       ),
     );
-  }
-
-  onIncreasePayments() {
-    setState(() {
-      numberOfPayments++;
-      paymentAmountController
-          .updateValue(amountController.numberValue / numberOfPayments);
-    });
-  }
-
-  onDecreasePayments() {
-    setState(() {
-      numberOfPayments--;
-      paymentAmountController
-          .updateValue(amountController.numberValue / numberOfPayments);
-    });
   }
 
   handleDatePicker(newDate) {
@@ -180,8 +128,7 @@ class _AddCCExpenseScreenState extends State<AddCCExpenseScreen> {
     String description = descriptionController.text;
     double amount = amountController.numberValue;
 
-    saveCreditCardExpense(_withPayments, numberOfPayments, amount, "ARS",
-            description, selectedCreditCard, date)
+    saveExpense(amount, "ARS", description, selectedAccount, date)
         .then((result) => {MyNavigator.goToHome(context)})
         .catchError((error) => {
               if (error is UnauthorizedException) MyNavigator.goToLogin(context)

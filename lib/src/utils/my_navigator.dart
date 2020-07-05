@@ -5,9 +5,6 @@ class MyNavigator {
   static void goToHome(BuildContext context) {
     Navigator.pushNamed(context, "/home");
   }
-  static void goToCreateCCExpense(BuildContext context) {
-    Navigator.pushNamed(context, "/ccExpense/create");
-  }
 
   static void goToLogin(BuildContext context) {
     Navigator.pushNamed(context, "/login");
@@ -22,5 +19,16 @@ class MyNavigator {
 
   static void goToCCExpenses(BuildContext context, CreditCardViewModel selectedCard) {
     Navigator.pushNamed(context, "/ccExpense", arguments: selectedCard);
+  }
+  static void goToCreateCCExpense(BuildContext context) {
+    Navigator.pushNamed(context, "/ccExpense/create");
+  }
+  
+  static void goToCreateExpense(BuildContext context) {
+    Navigator.pushNamed(context, "/expense/create");
+  }
+  
+  static void goToCreateIncome(BuildContext context) {
+    Navigator.pushNamed(context, "/income/create");
   }
 }

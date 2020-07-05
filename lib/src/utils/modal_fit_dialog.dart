@@ -18,12 +18,12 @@ class ModalFit extends StatelessWidget {
           ListTile(
             title: Text('Income'),
             leading: Icon(Icons.monetization_on, color: Colors.green,),
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () => MyNavigator.goToCreateIncome(context),
           ),
           ListTile(
             title: Text('Expense'),
             leading: Icon(Icons.attach_money, color: Colors.red,),
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () => MyNavigator.goToCreateExpense(context),
           ),
           ListTile(
             title: Text('Credit Card Expense'),
