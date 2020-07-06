@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moska_app/src/resources/sign_in/google_sign_in_provider.dart';
+import 'package:moska_app/src/utils/moska_cache_manager.dart';
 import 'package:moska_app/src/utils/my_navigator.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -49,6 +50,7 @@ class ProfileScreen extends StatelessWidget {
               RaisedButton(
                 onPressed: () {
                   signOutGoogle();
+                  MoskaCacheManager().emptyCache();
                   MyNavigator.goToLogin(context);
                 },
                 child: Padding(

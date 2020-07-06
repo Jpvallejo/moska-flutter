@@ -4,6 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:moska_app/src/models/expense_model.dart';
 import 'package:moska_app/src/models/income_model.dart';
 import 'package:moska_app/src/models/transaction_model.dart';
+import 'package:moska_app/src/services/credit_card_expense_service.dart';
+import 'package:moska_app/src/services/expense_service.dart';
+import 'package:moska_app/src/services/income_service.dart';
 import 'package:moska_app/src/services/transactions_service.dart';
 import 'package:moska_app/src/utils/UnauthorizedException.dart';
 import 'package:moska_app/src/utils/my_navigator.dart';
@@ -46,7 +49,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               future: getTransactions(date.month, date.year),
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
-                  return Text("loading");
+                  return Column();
                 } else if (snapshot.hasError) {
                   if (snapshot.error is UnauthorizedException) {
                     MyNavigator.goToLogin(context);
@@ -118,7 +121,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       // what to do after an item has been swiped away.
       onDismissed: (direction) async {
         // Remove the item from the data source.
-        // await deleteCCExpense(cc);
+        await deleteTransaction(cc);
         setState(() {
           data.removeAt(index);
         });
@@ -166,6 +169,16 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       );
     } else {
       return Icon(Icons.credit_card, color: Colors.blue);
+    }
+  }
+
+  deleteTransaction(TransactionModel transaction) {
+    if (transaction is IncomeModel) {
+      return deleteIncome(transaction);
+    } else if (transaction is ExpenseModel) {
+      return deleteExpense(transaction);
+    } else {
+      return deleteCCExpense(transaction);
     }
   }
 }
