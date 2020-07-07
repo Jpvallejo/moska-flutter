@@ -35,4 +35,8 @@ class MyNavigator {
   static void goToAccounts(BuildContext context) {
     Navigator.pushNamed(context, "/accounts");
   }
+  
+  static void goToCreateAccount(BuildContext context) {
+    Navigator.pushNamed(context, "/accounts/create");
+  }
 }

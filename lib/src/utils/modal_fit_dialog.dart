@@ -29,6 +29,11 @@ class ModalFit extends StatelessWidget {
             title: Text('Credit Card Expense'),
             leading: Icon(Icons.credit_card, color: Colors.blue),
             onTap: () => MyNavigator.goToCreateCCExpense(context),
+          ),
+          ListTile(
+            title: Text('Credit Card Expense'),
+            leading: Icon(Icons.account_balance_wallet, color: Colors.blue),
+            onTap: () => MyNavigator.goToCreateAccount(context),
           )
         ],
       ),
