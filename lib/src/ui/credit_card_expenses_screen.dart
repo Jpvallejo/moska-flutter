@@ -188,6 +188,7 @@ class _CCExpensesScreenState extends State<CCExpensesScreen> {
       child: ListTile(
         leading: Icon(Icons.credit_card),
         title: Text(cc.description ?? ''),
+        subtitle: Text(DateFormat('MM-dd-yyyy').format(cc.date) ?? ''),
         trailing: Text(cc.amount.toString()),
       ),
     );

@@ -10,8 +10,8 @@ import 'package:moska_app/src/models/credit_card_view_model.dart';
 import 'package:moska_app/src/services/credit_card_expense_service.dart';
 import 'package:moska_app/src/utils/moska_cache_manager.dart';
 
-Future<List<CreditCardViewModel>> getCreditCards() async {
-  DateTime date = DateTime.now();
+Future<List<CreditCardViewModel>> getCreditCards([DateTime givenDate]) async {
+  DateTime date = givenDate == null ? DateTime.now() : givenDate;
   final storage = new FlutterSecureStorage();
   final authToken = await storage.read(key: 'authToken') ?? '';
   dynamic headers = {
@@ -56,8 +56,8 @@ Future<List<CreditCardViewModel>> getCreditCards() async {
   }
 }
 
-Future<double> getCreditCardsSum() async {
-  var creditCards = await getCreditCards();
+Future<double> getCreditCardsSum([DateTime givenDate]) async {
+  var creditCards = await getCreditCards(givenDate);
   double totalAmount = 0;
   for (var card in creditCards ) {
     totalAmount += card.totalAmount;

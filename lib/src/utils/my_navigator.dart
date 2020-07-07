@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:moska_app/src/models/credit_card_view_model.dart';
 
 class MyNavigator {
-  static void goToHome(BuildContext context) {
-    Navigator.pushNamed(context, "/home");
+  static void goToHome(BuildContext context, {int selectedTab = 0}) {
+    Navigator.pushNamed(context, "/home", arguments: selectedTab);
   }
 
   static void goToLogin(BuildContext context) {
@@ -30,5 +30,9 @@ class MyNavigator {
   
   static void goToCreateIncome(BuildContext context) {
     Navigator.pushNamed(context, "/income/create");
+  }
+
+  static void goToAccounts(BuildContext context) {
+    Navigator.pushNamed(context, "/accounts");
   }
 }

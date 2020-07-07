@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:moska_app/src/ui/budget_screen.dart';
 import 'package:moska_app/src/ui/credit_cards_screen.dart';
@@ -31,15 +32,45 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget currentScreen = DashboardScreen(); // Our first view in viewport
 
   @override
+  void initState() {
+    int args;
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        args = ModalRoute.of(context).settings.arguments;
+      });
+      print(args);
+      onTabTapped(args);
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final storage = new FlutterSecureStorage();
+    var imageUrl = storage.read(key: 'imageUrl');
     return Scaffold(
       appBar: new AppBar(
         title: new Text(Moska.name),
-        leading: new IconButton(
-          icon: Icon(CupertinoIcons.profile_circled),
-          onPressed: () {
-            MyNavigator.goToProfile(context);
-          },
+        leading: new GestureDetector(
+          child: FutureBuilder<String>(
+            future: imageUrl,
+            builder: (context, snapshot) {
+              String url = '';
+              if (snapshot.connectionState == ConnectionState.done) {
+                url = snapshot.data;
+              }
+              return Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Container(
+                  decoration: new BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: new DecorationImage(
+                          fit: BoxFit.cover, image: new NetworkImage(url))),
+                ),
+              );
+            },
+          ),
+          onTap: () => MyNavigator.goToProfile(context),
         ),
       ),
       body: PageStorage(
@@ -52,12 +83,12 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: () {
             // MyNavigator.goToCreateCCExpense(context);
             showCupertinoModalBottomSheet(
-                            expand: false,
-                            context: context,
-                            backgroundColor: Colors.transparent,
-                            builder: (context, scrollController) =>
-                                ModalFit(scrollController: scrollController),
-                          );
+              expand: false,
+              context: context,
+              backgroundColor: Colors.transparent,
+              builder: (context, scrollController) =>
+                  ModalFit(scrollController: scrollController),
+            );
           }),
       bottomNavigationBar: BottomAppBar(
         clipBehavior: Clip.antiAlias,
