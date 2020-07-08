@@ -19,7 +19,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Card Expense'),
+        title: new Text('Create Account'),
         actions: <Widget>[
           new IconButton(
               icon: const Icon(Icons.save),

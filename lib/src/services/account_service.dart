@@ -71,7 +71,6 @@ Future<String> createAccount(
     "X-JWT-Token": authToken,
     'content-type': 'application/json'
   };
-  String postUrl;
   dynamic body = {
     "name": name,
     "currency": currency,
@@ -79,9 +78,10 @@ Future<String> createAccount(
   };
 
   MoskaCacheManager().removeFile(url);
-  final response = await http.post(postUrl,
+  final response = await http.post(url,
       headers: headers, body: utf8.encode(json.encode(body)));
-
+print(response.statusCode);
+print(response.body);
   if (response.statusCode == 201) {
     return response.body;
   } else if (response.statusCode == 401) {
